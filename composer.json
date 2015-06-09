@@ -1,0 +1,17 @@
+{
+    "name": "jowy/dupe",
+    "description": "Dupe releases",
+    "type": "Application",
+    "require": {
+        "silex/silex": "~2.0@dev",
+        "doctrine/dbal": "~2.6@dev"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Prasetyo Wicaksono",
+            "email": "pras@openmailbox.org"
+        }
+    ],
+    "minimum-stability": "dev"
+}

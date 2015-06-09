@@ -1,0 +1,23 @@
+{
+  "name": "dupe",
+  "version": "0.0.1",
+  "authors": [
+    "Prasetyo Wicaksono <pras@openmailbox.org>"
+  ],
+  "description": "Dupe Application",
+  "main": "index.html",
+  "keywords": [
+    "dupe"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}
