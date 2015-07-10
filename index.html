@@ -62,28 +62,6 @@
 ████▓▒░                                                           ░▒▒▒▓███
 ████▓▒░                                                            ▒▒▒▓▓██</pre>
                 </div>
-                <div class="chat chat-highlight">
-                    <span class="timestamp">2014-10-21 08:53:57</span>
-                    <span class="text">xasdjsdsadnsadlkasmdalskdasjdhasduhasd</span>
-                </div>
-                <div class="chat chat-normal">
-                    <span class="timestamp">2014-10-21 08:53:57</span>
-                    <span class="section"><a href="#">[XXX-IMGSET]</a></span>
-                    <span class="release">Twin.Peaks.S01E09.FINAL.SPANiSH.BDRip.x264-FCC</span>
-                    <span class="download"><a href="#">[DL]</a></span>
-                    <span class="info">625.0MB</span>
-                </div>
-                <div class="chat chat-normal">
-                    <span class="timestamp">2014-10-21 08:52:28</span>
-                    <span class="section"><a href="#">[XXX-IMGSET]</a></span>
-                    <span class="release">AllOver30.com_14.10.21.Sarah.Shevon.XXX.iMAGESET-YAPG</span>
-                    <span class="download"><a href="#">[DL]</a></span>
-                    <span class="info">322.0MB</span>
-                </div>
-                <div class="chat chat-notice">
-                    <span class="timestamp">2014-10-21 08:53:57</span>
-                    <span class="text">xasdjsdsadnsadlkasmdalskdasjdhasduhasd</span>
-                </div>
             </div>
             <div class="input-box fixed">
                 <div class="input-wrapper">
@@ -105,28 +83,57 @@
 </body>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script>
-$(document).ready(function() {
-  $(window).scrollTop($(".scrollable").get(0).scrollHeight);
-});
-$("#query-btn").click(function() {
-  $.post("http://localhost:8080/request", {query : $("#query").val()}, function (data) {
-    $.each(data, function(key, value){
-      $(".scrollable")
-      .find(".chat")
-      .end()
-      .append("<div class='chat chat-normal'><span class='timestamp'>"+ value.date +"</span> <span class='section'>"+ value.section +"</span> <span class='release'>"+ value.title +"</span></div>");
-      $(window).scrollTop($(".scrollable").get(0).scrollHeight);
+    function request() {
+        var q = $("#query").val();
+        $("#query").val("");
+        $(".scrollable")
+                .find(".chat")
+                .end()
+                .append("<div class='chat chat-normal'>me> "+q+"</div>");
+        $(window).scrollTop($(".scrollable").get(0).scrollHeight);
+
+        $.post("http://localhost:8000/request", {query : q}, function (data) {
+            $.each(data, function(key, value){
+                value.forEach(function (obj) {
+                    $(".scrollable")
+                            .find(".chat")
+                            .end()
+                            .append("<div class='chat chat-normal'>HandsomeBot>" +
+                            "<span class='timestamp'>["+ obj.date +"]</span> " +
+                            "<span class='section'>["+ obj.section +"]</span> " +
+                            "<span class='release'>["+ obj.releasename +"]</span> " +
+                            "<span class='info'>["+ obj.nb_files + "f|" + obj.size +"mb]</span>" +
+                            "</div>");
+                    $(window).scrollTop($(".scrollable").get(0).scrollHeight);
+                });
+            });
+        }, "json")
+                .fail(function ($xhr) {
+                    var data = $xhr.responseJSON;
+                    $(".scrollable")
+                            .find(".chat")
+                            .end()
+                            .append("<div class='chat chat-normal'>HandsomeBot> " +
+                            "<span class='text'>"+ data.message +"</span>" +
+                            "</div>");
+                    $(window).scrollTop($(".scrollable").get(0).scrollHeight);
+                });
+    }
+
+    $(document).ready(function() {
+        $(window).scrollTop($(".scrollable").get(0).scrollHeight);
     });
-  }, "json")
-  .fail(function ($xhr) {
-    var data = $xhr.responseJSON;
-    $(".scrollable")
-    .find(".chat")
-    .end()
-    .append("<div class='chat chat-notice'><span class='text'>"+ data.message +"</span></div>");
-    $(window).scrollTop($(".scrollable").get(0).scrollHeight);
-  });
-  return false;
-});
+
+    $(document).keypress(function(e) {
+        if(e.which == 13) {
+            request();
+            return false;
+        }
+    });
+
+    $("#query-btn").click(function() {
+        request();
+        return false;
+    });
 </script>
 </html>

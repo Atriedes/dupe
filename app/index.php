@@ -13,13 +13,11 @@ $app = new \Silex\Application([
 
 $app->register(new \Silex\Provider\DoctrineServiceProvider(), [
     "db.options" => [
-        "read" => [
-            "driver" => "pdo_mysql",
-            "host" => "localhost",
-            "dbname" => "dupe",
-            "user" => "root",
-            "password" => "123"
-        ]
+        "driver" => "pdo_mysql",
+        "host" => "localhost",
+        "dbname" => "dupe",
+        "user" => "root",
+        "password" => "123"
     ]
 ]);
 
@@ -40,13 +38,24 @@ $app->post("/request", function(\Symfony\Component\HttpFoundation\Request $reque
             if (count($query) == 0) {
                 throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException("parameter required");
             }
-            return new \Symfony\Component\HttpFoundation\JsonResponse([[
-                "date" => "2014-10-21 08:22:12",
-                "section" => "[0DAY]",
-                "title" => "Some.Software.v1.0.Incl.Keymaker-CORE",
-                "size" => "2MB",
-                "disk" => "1"
-            ]]);
+            unset($query[0]);
+
+            $sql = "SELECT * FROM GAME_db WHERE releasename ";
+            $input = [];
+            foreach ($query as $q) {
+                $sql .= "LIKE ? AND releasename ";
+                $input[] = "%{$q}%";
+            }
+
+            $sql = substr($sql, 0, strlen($sql)-17);
+
+            $data = $app["db"]->fetchAll($sql, $input);
+
+            if (count($data) == 0) {
+                throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException("release not found");
+            }
+
+            return new \Symfony\Component\HttpFoundation\JsonResponse([$data]);
             break;
         case "!nuke":
             break;
